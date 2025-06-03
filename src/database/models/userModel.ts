@@ -25,6 +25,7 @@ class User extends Model {
 
   @Column({
     type: DataType.STRING,
+    unique:true
   })
   declare email: string;
 
