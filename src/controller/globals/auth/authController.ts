@@ -63,7 +63,9 @@ class AuthController {
    const token =  jwt.sign({id:data.id},process.env.SECRET_KEY as string,{
       expiresIn:"7d"
     })
-    res.cookie('token',token)
+    res.json({
+      token : token
+    })
     res.status(200).json({
       message: "login successfully",
     });
