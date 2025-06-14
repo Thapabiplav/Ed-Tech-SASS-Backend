@@ -1,4 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
+import { config } from "dotenv";
+config();
+
 import { dbConfig } from "../config/config";
 
 const sequelize = new Sequelize({
