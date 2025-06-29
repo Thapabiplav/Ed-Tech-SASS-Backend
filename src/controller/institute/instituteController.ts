@@ -10,8 +10,9 @@ class InstituteController {
       instituteEmail,
       institutePhoneNumber,
     } = req.body;
-    const { instituteVatNo } = req.body || null;
-    const { institutePanNo } = req.body || null; 
+    const instituteVatNo = req.body.instituteVatNo || null;
+    const institutePanNo = req.body.institutePanNo || null;
+
     if (
       !instituteName ||
       !institutePhoneNumber ||
@@ -24,8 +25,8 @@ class InstituteController {
       });
       return;
     }
-    
-    const instituteNumber = generateRandomInstituteNumber()
+
+    const instituteNumber = generateRandomInstituteNumber();
 
     await sequelize.query(`CREATE TABLE IF NOT EXISTS institute_${instituteNumber} (
       id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -39,9 +40,19 @@ class InstituteController {
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`);
 
-      await sequelize.query(`INSERT INTO institute_${instituteNumber} (instituteName, instituteEmail, institutePhoneNumber, instituteAddress, institutePanNo, instituteVatNo)VALUES (?,?,?,?,?,?)`,{
-        replacements:[instituteName, instituteEmail, institutePhoneNumber, instituteAddress,institutePanNo, instituteVatNo]
-      })
+    await sequelize.query(
+      `INSERT INTO institute_${instituteNumber} (instituteName, instituteEmail, institutePhoneNumber, instituteAddress, institutePanNo, instituteVatNo) VALUES (?,?,?,?,?,?)`,
+      {
+        replacements: [
+          instituteName,
+          instituteEmail,
+          institutePhoneNumber,
+          instituteAddress,
+          institutePanNo,
+          instituteVatNo,
+        ],
+      }
+    );
     res.status(201).json({
       message: "institute created",
     });
