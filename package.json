@@ -11,9 +11,11 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.1",
     "sequelize-typescript": "^2.1.6"
   },
@@ -21,7 +23,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.29",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^22.17.2",
+    "multer": "^2.0.2",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

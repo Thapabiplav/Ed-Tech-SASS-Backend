@@ -13,9 +13,11 @@ class CourseController {
       return
     }
 
+    const courseThumbnail = req.file ?req.file.path : null
+
     await sequelize.query(`INSERT INTO course_${instituteNumber}(
-      coursePrice,courseName,courseDescription,courseDuration,courseLevel) VALUES (?,?,?,?,?)`,{
-        replacements:[,courseDescription,courseDuration,courseLevel]
+      coursePrice,courseName,courseDescription,courseDuration,courseLevel,courseThumbnail) VALUES (?,?,?,?,?,?)`,{
+        replacements:[,courseDescription,courseDuration,courseLevel,courseThumbnail]
       })
       res.status(200).json({
         message:'course created successfully'

@@ -3,6 +3,7 @@ import sequelize from "../../database/connection";
 import generateRandomInstituteNumber from "../../services/generateRandomInstituteNumber";
 import { IExtendedRequest } from "../../types/type";
 import User from "../../database/models/userModel";
+import categories from "../../seed";
 
 class InstituteController {
   static async createInstitute(
@@ -135,6 +136,7 @@ class InstituteController {
     courseDuration VARCHAR(255)  NOT NULL,
     courseThumbnail VARCHAR(255),
     courseDescription TEXT,
+    courseThumbnail VARCHAR(255),
     courseLevel ENUM('beginner','intermediate','advance') ,
      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -145,6 +147,25 @@ class InstituteController {
       });
       return;
  }
+ 
+static async createCategoryTable (req:IExtendedRequest,res:Response,next:NextFunction){
+  const instituteNumber = req.user?.currentInstituteNumber
+  await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${instituteNumber}(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    categoryName VARCHAR(100) NOT NULL,
+    categoryDescription TEXT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )`)
+    
+    categories.forEach(async function(category){
+      await sequelize.query(`INSERT INTO category_${instituteNumber}(categoryName,categoryDescription) VALUES (?,?)`,{
+        replacements:[category.categoryName,category.categoryDescription]
+      })
+    })
+    next()
+}
+
 }
 
 
