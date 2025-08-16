@@ -11,15 +11,15 @@ class AuthController {
       });
       return;
     }
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    const { userName, email, password } = req.body;
+    if (!userName || !email || !password) {
       res.status(400).json({
         message: "please provide above details",
       });
       return;
     }
     await User.create({
-      username,
+      userName,
       email,
       password: bcrypt.hashSync(password, 12),
     });
