@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
 import sequelize from "../../database/connection";
 import generateRandomInstituteNumber from "../../services/generateRandomInstituteNumber";
+import { IExtendedRequest } from "../../types/type";
 
 class InstituteController {
-  static async createInstitute(req: Request, res: Response) {
+  static async createInstitute(req: IExtendedRequest, res: Response) {
     const {
       instituteName,
       instituteAddress,
       instituteEmail,
       institutePhoneNumber,
     } = req.body;
+    
     const instituteVatNo = req.body.instituteVatNo || null;
     const institutePanNo = req.body.institutePanNo || null;
 
@@ -57,6 +59,10 @@ class InstituteController {
       message: "institute created",
     });
   }
+}
+
+const createTeacherTable = async (req:Request, res:Response)=>{
+  // await  sequelize.query(`CREATE TABLE teacher`)
 }
 
 export default InstituteController;
