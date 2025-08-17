@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
