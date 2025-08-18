@@ -105,7 +105,10 @@ class InstituteController {
     teacherEmail VARCHAR(255) NOT NULL UNIQUE,
     teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE,
     teacherExpertise VARCHAR(255),
-    joinedDate DATE,
+    teacherJoinedDate DATE,
+    teacherSalary VARCHAR(255),
+    teacherPhoto VARCHAR(255),
+    teacherPassword VARCHAR(255),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )`)
@@ -136,6 +139,7 @@ class InstituteController {
     courseDuration VARCHAR(255)  NOT NULL,
     courseDescription TEXT,
     courseThumbnail VARCHAR(255),
+    teacherId VARCHAR(36)  NULL REFERENCES teacher_${instituteNumber}(id),
     categoryId VARCHAR(36) NOT NULL REFERENCES category_${instituteNumber} (id),
     courseLevel ENUM('beginner','intermediate','advance') ,
      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
