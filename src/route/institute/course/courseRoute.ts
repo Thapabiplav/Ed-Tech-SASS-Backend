@@ -4,22 +4,21 @@ import asyncErrorHandler from "../../../services/asyncErrorHandler";
 import CourseController from "../../../controller/institute/course/courseController";
 import upload from "../../../middleware/multerUpload";
 
-
-
 const router: Router = express.Router();
 
 router
   .route("/course")
   .post(
     Middleware.isLoggedIn,
-    asyncErrorHandler(CourseController.createCourse)
-  );
+    upload.single("courseThumbnail"),
+   asyncErrorHandler(CourseController.createCourse)  
+);
+
 router.route("/course").get(asyncErrorHandler(CourseController.getAllCourse));
 router
   .route("/course/:id")
   .delete(
     Middleware.isLoggedIn,
-    upload.single("courseThumbnail"),
     asyncErrorHandler(CourseController.deleteCourse)
   )
   .get(asyncErrorHandler(CourseController.getSingleCourse));

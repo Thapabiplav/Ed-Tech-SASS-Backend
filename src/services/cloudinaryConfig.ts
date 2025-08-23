@@ -5,7 +5,7 @@ import { cloudinaryConfig } from '../config/config'
 cloudinary.config({
   cloud_name:cloudinaryConfig.cloudName,
   api_key:cloudinaryConfig.apiKey,
-  api_secret:cloudinaryConfig.apiKey
+  api_secret:cloudinaryConfig.apiSecret
 })
 
  const storage = new CloudinaryStorage({

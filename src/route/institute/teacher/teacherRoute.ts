@@ -10,7 +10,7 @@ router
   .route("/teacher")
   .post(
     Middleware.isLoggedIn,
-    upload.single("teacherPhoto"),
+    upload.single('teacherPhoto'),
     asyncErrorHandler(TeacherController.createTeacher)
   )
   .get(Middleware.isLoggedIn, asyncErrorHandler(TeacherController.getTeachers));

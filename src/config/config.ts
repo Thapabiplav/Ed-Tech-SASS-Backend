@@ -15,3 +15,8 @@ export const cloudinaryConfig = {
   apiKey:process.env.CLOUDINARY_API_KEY,
   apiSecret : process.env.ClOUDINARY_API_SECRET
 }
+
+export const mailService = {
+  email:process.env.EMAIL,
+  pass:process.env.PASS
+}

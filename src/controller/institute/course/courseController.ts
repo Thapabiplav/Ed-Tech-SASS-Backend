@@ -1,32 +1,56 @@
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { IExtendedRequest } from "../../../types/type";
 import sequelize from "../../../database/connection";
 import { QueryTypes } from "sequelize";
 
 
 class CourseController {
-  static async createCourse(req:IExtendedRequest,res:Response){
-    const instituteNumber = req.user?.currentInstituteNumber
-    const { coursePrice , courseName,courseDescription,courseDuration,courseLevel,categoryId} = req.body
-    if(!coursePrice || !courseName || !courseDescription || !courseDuration || !courseLevel || !categoryId){
-      res.status(400).json({
-        message:"please provide coursePrice, courseName,courseDescription, courseLevel,categoryId"
-      })
-      return
-    }
+static async createCourse(req: IExtendedRequest, res: Response) {
+  const instituteNumber = req.user?.currentInstituteNumber;
 
-    const courseThumbnail = req.file ?req.file.path : null
+  const {
+    coursePrice,
+    courseName,
+    courseDescription,
+    courseDuration,
+    courseLevel,
+    categoryId,
+  } = req.body || {};
 
-    await sequelize.query(`INSERT INTO course_${instituteNumber}(
-      coursePrice,courseName,courseDescription,courseDuration,courseLevel,courseThumbnail,categoryId) VALUES (?,?,?,?,?,?,?)`,{
-        replacements:[,courseDescription,courseDuration,courseLevel,courseThumbnail,categoryId],
-        type:QueryTypes.INSERT
-      })
-      res.status(200).json({
-        message:'course created successfully'
-      })
-      return
+  if (!coursePrice || !courseName || !courseDescription || !courseDuration || !courseLevel || !categoryId) {
+    return res.status(400).json({
+      message: "please provide coursePrice, courseName, courseDescription, courseDuration, courseLevel, categoryId",
+    });
   }
+
+  const courseThumbnail = req.file ? req.file.path : null;
+
+await sequelize.query(
+  `INSERT INTO course_${instituteNumber}
+    (courseName, coursePrice, courseDuration, courseDescription, courseThumbnail, categoryId, courseLevel)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  {
+    replacements: [
+      courseName,
+      coursePrice,
+      courseDuration,
+      courseDescription,
+      courseThumbnail,
+      categoryId,
+      courseLevel,
+    ],
+    type: QueryTypes.INSERT,
+  }
+);
+
+
+  res.status(200).json({
+    message: "course created successfully",
+  });
+  return
+}
+
+
 
   static async deleteCourse (req:IExtendedRequest,res:Response){
     const instituteNumber = req.user?.currentInstituteNumber
@@ -53,9 +77,14 @@ class CourseController {
 
   static async getAllCourse (req:IExtendedRequest,res:Response){
     const instituteNumber = req.user?.currentInstituteNumber
-   const courses= await sequelize.query(`SELECT * FROM course_${instituteNumber}JOIN category_${instituteNumber} ON course_${instituteNumber}.categoryId = category${instituteNumber}.id`,{
-    type:QueryTypes.SELECT
-   })
+  const courses = await sequelize.query(
+  `SELECT * 
+   FROM course_${instituteNumber} 
+   JOIN category_${instituteNumber} 
+   ON course_${instituteNumber}.categoryId = category_${instituteNumber}.id`,
+  { type: QueryTypes.SELECT }
+);
+
     res.status(200).json({
       message:'course fetched successfully',
       data:courses

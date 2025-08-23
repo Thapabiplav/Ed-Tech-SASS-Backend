@@ -62,8 +62,8 @@ class InstituteController {
           instituteEmail,
           institutePhoneNumber,
           instituteAddress,
-          institutePanNo,
           instituteVatNo,
+          institutePanNo,
         ],
       }
     );
@@ -133,9 +133,9 @@ class InstituteController {
  static async createCourseTable (req:IExtendedRequest, res:Response ){
   const instituteNumber = req.user?.currentInstituteNumber
   await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
- id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+   id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     courseName VARCHAR(255) NOT NULL UNIQUE,
-    price VARCHAR(255) NOT NULL,
+    coursePrice VARCHAR(255) NOT NULL,
     courseDuration VARCHAR(255)  NOT NULL,
     courseDescription TEXT,
     courseThumbnail VARCHAR(255),

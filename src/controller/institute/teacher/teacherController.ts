@@ -3,6 +3,7 @@ import { IExtendedRequest } from "../../../types/type";
 import sequelize from "../../../database/connection";
 import { QueryTypes } from "sequelize";
 import generateRandomPassword from "../../../services/generateRandomPassword";
+import sendMail from "../../../services/sendMail";
 
 class TeacherController {
   static async createTeacher(req: IExtendedRequest, res: Response) {
@@ -34,7 +35,7 @@ class TeacherController {
     const data = generateRandomPassword(teacherName);
 
     await sequelize.query(
-      `INSERT INTO teacher_${instituteNumber} (teacherName,teacherEmail,teacherPhoneNumber,teacherExpertise,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES (?,?,?,?,?,?,?)`,
+      `INSERT INTO teacher_${instituteNumber} (teacherName,teacherEmail,teacherPhoneNumber,teacherExpertise,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES (?,?,?,?,?,?,?,?)`,
       {
         type: QueryTypes.INSERT,
         replacements: [
@@ -66,6 +67,13 @@ class TeacherController {
       }
     );
 
+    const mailInformation = {
+      to: teacherEmail,
+      subject: "Welcome to our welcome to teacher of ShikshaSaSS",
+      text: `Welcome to our platfrom, Email:${teacherEmail}, Password:${data.plainVersion}`,
+    };
+    await sendMail(mailInformation);
+
     res.status(201).json({
       message: "teacher created successfully",
     });
@@ -73,18 +81,14 @@ class TeacherController {
   }
 
   static async getTeachers(req: IExtendedRequest, res: Response) {
-    const instituteNumber = req.user?.currentInstituteNumber;
-    const teachers = await sequelize.query(
-      `SELECT * FROM teacher_${instituteNumber}`,
-      {
-        type: QueryTypes.SELECT,
-      }
-    );
-    return res.status(200).json({
-      message: "teachers fetched successfully",
-      data: teachers,
-    });
-  }
+    const instituteNumber = req.user?.currentInstituteNumber; 
+    const teachers = await sequelize.query(`SELECT * FROM teacher_${instituteNumber}`,{
+        type : QueryTypes.SELECT
+    })
+    res.status(200).json({
+        message : "teachers fetched", data:teachers
+    })
+}
 
   static async deleteTeacher(req: IExtendedRequest, res: Response) {
     const instituteNumber = req.user?.currentInstituteNumber;
