@@ -69,8 +69,9 @@ class TeacherController {
 
     const mailInformation = {
       to: teacherEmail,
-      subject: "Welcome to our welcome to teacher of ShikshaSaSS",
-      text: `Welcome to our platfrom, Email:${teacherEmail}, Password:${data.plainVersion}`,
+      subject: "Welcome to our platform as a teacher of ShikshaSaSS",
+      text: `Welcome to our platform, Email:${teacherEmail}, Password:${data.plainVersion},
+      Your Institute Number : ${instituteNumber}`,
     };
     await sendMail(mailInformation);
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../../../database/models/userModel";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken'
+import generateJwtToken from "../../../services/generateJwtToken";
 
 class AuthController {
   static registerUser = async (req: Request, res: Response) => {
@@ -60,9 +61,7 @@ class AuthController {
       });
       return;
     }
-   const token =  jwt.sign({id:data.id},process.env.SECRET_KEY as string,{
-      expiresIn:"7d"
-    })
+   const token = generateJwtToken({id:data.id})
     res.json({
       token : token
     })

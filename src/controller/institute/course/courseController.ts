@@ -53,7 +53,7 @@ await sequelize.query(
 
 
   static async deleteCourse (req:IExtendedRequest,res:Response){
-    const instituteNumber = req.user?.currentInstituteNumber
+    const instituteNumber = req.user?.currentInstituteNumber; 
     const courseId = req.params.id
     const [courseData] = await sequelize.query(`SELECT * FROM course_${instituteNumber} WHERE id=?`,{
       replacements:[courseId]
