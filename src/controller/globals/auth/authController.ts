@@ -62,12 +62,14 @@ class AuthController {
       return;
     }
    const token = generateJwtToken({id:data.id})
-    res.json({
-      token : token
-    })
     res.status(200).json({
+      data:{
+        token:token,
+        userName:data.userName
+      },
       message: "login successfully",
     });
+    return
   };
 }
 

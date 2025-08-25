@@ -2,6 +2,7 @@ import {  Response } from "express";
 import { IExtendedRequest } from "../../../types/type";
 import sequelize from "../../../database/connection";
 import { QueryTypes } from "sequelize";
+import { CreatedAt } from "sequelize-typescript";
 
 class CategoryController{
 static async createCategory(req:IExtendedRequest,res:Response){
@@ -9,7 +10,7 @@ static async createCategory(req:IExtendedRequest,res:Response){
  const{categoryName,categoryDescription} = req.body
  if(!categoryName|| !categoryDescription){
   res.status(400).json({
-    message:"please provide the categoryName and CategoryDescription"
+    message:"please provide the categoryName and categoryDescription"
   })
   return
  }
@@ -17,8 +18,18 @@ static async createCategory(req:IExtendedRequest,res:Response){
   type:QueryTypes.INSERT,
   replacements:[categoryName,categoryDescription]
  })
- res.status(200).json({
-  message:'category added successfully'
+const [categoryData] :{id:string, createdAt: Date} [] = await sequelize.query(`SELECT id,createdAt from category_${instituteNumber} WHERE categoryName = ?`,{
+  replacements:[categoryName],
+  type:QueryTypes.SELECT
+ }) 
+ res.status(201).json({
+  message:'category added successfully',
+  data:{
+    categoryName,
+    categoryDescription,
+    id:categoryData.id,
+    CreatedAt:categoryData.createdAt
+  }
  })
  return
 }
