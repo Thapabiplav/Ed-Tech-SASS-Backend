@@ -10,6 +10,9 @@ import teacherInstituteRoute from "./route/institute/teacher/teacherRoute";
 import teacherRoute from "./route/teacher/teacherRoute";
 import lessonRoute from './route/teacher/course/lessons/lessons-route'
 import chapterRoute from './route/teacher/course/chapters/course-chapter-route'
+import studentInstituteRoute from './route/student/institute/student-route'
+
+
 app.use(express.json());
 
 app.use(
@@ -28,5 +31,6 @@ app.use("/", teacherInstituteRoute);
 app.use("/teacher", teacherRoute);
 app.use('/teacher/course', chapterRoute)
 app.use('/teacher/course', lessonRoute)
+app.use('/student',studentInstituteRoute)
 
 export default app;
