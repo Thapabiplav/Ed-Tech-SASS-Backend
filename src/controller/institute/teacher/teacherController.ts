@@ -7,65 +7,33 @@ import sendMail from "../../../services/sendMail";
 
 class TeacherController {
   static async createTeacher(req: IExtendedRequest, res: Response) {
-    const instituteNumber = req.user?.currentInstituteNumber;
-    const {
-      teacherName,
-      teacherEmail,
-      teacherPhoneNumber,
-      teacherExpertise,
-      teacherSalary,
-      teacherJoinedDate,
-      courseId,
-    } = req.body;
-    const teacherPhoto = req.file ? req.file.path : null;
-    if (
-      !teacherName ||
-      !teacherEmail ||
-      !teacherPhoneNumber ||
-      !teacherExpertise ||
-      !teacherSalary ||
-      !teacherJoinedDate
-    ) {
-      res.status(400).json({
-        message:
-          "please provide teacherName, teacherEmail, teacherPhoneNumber, teacherExpertise,teacherSalary,teacherJoinedDate",
-      });
-      return;
+   const instituteNumber = req.user?.currentInstituteNumber ; 
+    const {teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate,courseId} = req.body 
+    const teacherPhoto = req.file ? req.file.path : "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg"
+    if(!teacherName || !teacherEmail || !teacherPhoneNumber || !teacherExperience || !teacherSalary || !teacherJoinedDate || !courseId){
+        return res.status(400).json({
+            message : "Please provide teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherSalary,teacherJoinedDate,courseId"
+        })
     }
-    const data = generateRandomPassword(teacherName);
+    // password generate functionnn 
+    const data = generateRandomPassword(teacherName)
+    const insertedData =  await sequelize.query(`INSERT INTO teacher_${instituteNumber}(teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword, courseId) VALUES(?,?,?,?,?,?,?,?,?)`,{
+        type : QueryTypes.INSERT, 
+        replacements : [teacherName,teacherEmail,teacherPhoneNumber,teacherExperience,teacherJoinedDate,teacherSalary,teacherPhoto,data.hashedVersion, courseId]
+    })
 
-    await sequelize.query(
-      `INSERT INTO teacher_${instituteNumber} (teacherName,teacherEmail,teacherPhoneNumber,teacherExpertise,teacherJoinedDate,teacherSalary,teacherPhoto,teacherPassword) VALUES (?,?,?,?,?,?,?,?)`,
-      {
-        type: QueryTypes.INSERT,
-        replacements: [
-          teacherName,
-          teacherEmail,
-          teacherPhoneNumber,
-          teacherExpertise,
-          teacherJoinedDate,
-          teacherSalary,
-          teacherPhoto,
-          data.hashedVersion,
-        ],
-      }
-    );
+    const teacherData : {id:string}[]= await sequelize.query(`SELECT id FROM teacher_${instituteNumber} WHERE teacherEmail=?`,{
+        type : QueryTypes.SELECT, 
+        replacements : [teacherEmail]
+    })
 
-    const teacherData: { id: string }[] = await sequelize.query(
-      `SELECT id FROM teacher_${instituteNumber} WHERE teacherEmail=?`,
-      {
-        type: QueryTypes.SELECT,
-        replacements: [teacherEmail],
-      }
-    );
-
-    await sequelize.query(
-      `UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,
-      {
-        type: QueryTypes.UPDATE,
-        replacements: [teacherData[0].id, courseId],
-      }
-    );
+    // await sequelize.query(
+    //   `UPDATE course_${instituteNumber} SET teacherId=? WHERE id=?`,
+    //   {
+    //     type: QueryTypes.UPDATE,
+    //     replacements: [teacherData[0].id, courseId],
+    //   }
+    // );
 
     const mailInformation = {
       to: teacherEmail,
@@ -82,14 +50,20 @@ class TeacherController {
   }
 
   static async getTeachers(req: IExtendedRequest, res: Response) {
-    const instituteNumber = req.user?.currentInstituteNumber; 
-    const teachers = await sequelize.query(`SELECT * FROM teacher_${instituteNumber}`,{
-        type : QueryTypes.SELECT
-    })
+    const instituteNumber = req.user?.currentInstituteNumber;
+    const teachers = await sequelize.query(
+      `SELECT teacher_${instituteNumber}.*,
+      course_${instituteNumber}.courseName FROM teacher_${instituteNumber} JOIN course_${instituteNumber} ON teacher_${instituteNumber}.courseId = course_${instituteNumber}.id`,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
     res.status(200).json({
-        message : "teachers fetched", data:teachers
-    })
-}
+      message: "teachers fetched",
+      data: teachers,
+    });
+    return
+  }
 
   static async deleteTeacher(req: IExtendedRequest, res: Response) {
     const instituteNumber = req.user?.currentInstituteNumber;

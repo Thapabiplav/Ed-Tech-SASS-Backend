@@ -92,32 +92,41 @@ class InstituteController {
           },
         }
       );
-       req.user.currentInstituteNumber= instituteNumber
+      req.user.currentInstituteNumber = instituteNumber;
     }
     next();
   }
 
- static  async createTeacherTable (req:IExtendedRequest, res:Response,next:NextFunction){
-  const instituteNumber = req.user?.currentInstituteNumber
-  await sequelize.query(`CREATE TABLE IF NOT EXISTS teacher_${instituteNumber} (
+  static async createTeacherTable(
+    req: IExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const instituteNumber = req.user?.currentInstituteNumber;
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS teacher_${instituteNumber} (
     id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     teacherName VARCHAR(255) NOT NULL,
     teacherEmail VARCHAR(255) NOT NULL UNIQUE,
     teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE,
-    teacherExpertise VARCHAR(255),
+    teacherExperience VARCHAR(255),
     teacherJoinedDate DATE,
     teacherSalary VARCHAR(255),
     teacherPhoto VARCHAR(255),
     teacherPassword VARCHAR(255),
+    courseId VARCHAR(100) REFERENCES course_${instituteNumber}(id),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )`)
-    next()
- }
+    )`);
+    next();
+  }
 
- static async createStudentTable (req:IExtendedRequest, res:Response , next:NextFunction){
-  const instituteNumber = req.user?.currentInstituteNumber
-  await sequelize.query(`CREATE TABLE IF NOT EXISTS student_${instituteNumber}(
+  static async createStudentTable(
+    req: IExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const instituteNumber = req.user?.currentInstituteNumber;
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS student_${instituteNumber}(
    id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     studentName VARCHAR(255) NOT NULL,
     studentEmail VARCHAR(255) NOT NULL UNIQUE,
@@ -126,13 +135,13 @@ class InstituteController {
     enrollDate DATE,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )`)
-    next()
- }
+  )`);
+    next();
+  }
 
- static async createCourseTable (req:IExtendedRequest, res:Response ){
-  const instituteNumber = req.user?.currentInstituteNumber
-  await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
+  static async createCourseTable(req: IExtendedRequest, res: Response) {
+    const instituteNumber = req.user?.currentInstituteNumber;
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${instituteNumber}(
    id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     courseName VARCHAR(255) NOT NULL UNIQUE,
     coursePrice VARCHAR(255) NOT NULL,
@@ -144,34 +153,38 @@ class InstituteController {
     courseLevel ENUM('beginner','intermediate','advance') ,
      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )`)
-   res.status(201).json({
-        message: "Institute created successfully",
-        instituteNumber,
-      });
-      return;
- }
- 
-static async createCategoryTable (req:IExtendedRequest,res:Response,next:NextFunction){
-  const instituteNumber = req.user?.currentInstituteNumber
-  await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${instituteNumber}(
+  )`);
+    res.status(201).json({
+      message: "Institute created successfully",
+      instituteNumber,
+    });
+    return;
+  }
+
+  static async createCategoryTable(
+    req: IExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const instituteNumber = req.user?.currentInstituteNumber;
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS category_${instituteNumber}(
    id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
     categoryName VARCHAR(100) NOT NULL,
     categoryDescription TEXT,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )`)
-    
-    categories.forEach(async function(category){
-      await sequelize.query(`INSERT INTO category_${instituteNumber}(categoryName,categoryDescription) VALUES (?,?)`,{
-        replacements:[category.categoryName,category.categoryDescription]
-      })
-    })
-    next()
+    )`);
+
+    categories.forEach(async function (category) {
+      await sequelize.query(
+        `INSERT INTO category_${instituteNumber}(categoryName,categoryDescription) VALUES (?,?)`,
+        {
+          replacements: [category.categoryName, category.categoryDescription],
+        }
+      );
+    });
+    next();
+  }
 }
-
-}
-
-
 
 export default InstituteController;

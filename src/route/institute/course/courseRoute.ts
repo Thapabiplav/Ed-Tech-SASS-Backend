@@ -14,7 +14,7 @@ router
    asyncErrorHandler(CourseController.createCourse)  
 );
 
-router.route("/course").get(asyncErrorHandler(CourseController.getAllCourse));
+router.route("/course").get( Middleware.isLoggedIn, asyncErrorHandler(CourseController.getAllCourse));
 router
   .route("/course/:id")
   .delete(

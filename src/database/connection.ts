@@ -23,7 +23,7 @@ sequelize
     console.log(err);
   });
 
-sequelize.sync({ alter: false }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log("migrated successfully");
 });
 
