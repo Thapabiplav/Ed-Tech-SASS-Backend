@@ -1,7 +1,7 @@
 import { NextFunction,  Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../database/models/userModel";
-import { IExtendedRequest } from "../types/type";
+import { IExtendedRequest, UserRole } from "../types/type";
 
 class Middleware {
   static isLoggedIn(req: IExtendedRequest, res: Response, next: NextFunction) {
@@ -23,7 +23,7 @@ class Middleware {
           });
         } else {
           const userData = await User.findByPk(result.id,{
-            attributes:['id','currentInstituteNumber']
+            attributes:['id','currentInstituteNumber','role']
           });
           if (!userData) {
             res.status(403).json({
@@ -36,6 +36,20 @@ class Middleware {
         }
       }
     );
+  }
+
+  static  restrictTo(...roles:UserRole[]){
+  return(req:IExtendedRequest,res:Response, next:NextFunction) =>{
+    let userRole = req.user?.id as UserRole
+    if(roles.includes(userRole)){
+      next()
+    }
+    else{
+      res.status(403).json({
+        message:"Invalid, you don't have access to this"
+      })
+    }
+  }
   }
 }
 

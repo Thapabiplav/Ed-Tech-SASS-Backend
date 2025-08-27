@@ -4,6 +4,7 @@ import generateRandomInstituteNumber from "../../services/generateRandomInstitut
 import { IExtendedRequest } from "../../types/type";
 import User from "../../database/models/userModel";
 import categories from "../../seed";
+import { QueryTypes } from "sequelize";
 
 class InstituteController {
   static async createInstitute(
@@ -184,6 +185,45 @@ class InstituteController {
       );
     });
     next();
+  }
+    static async createCourseChapterTable(
+    req: IExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+     const instituteNumber = req.user?.currentInstituteNumber
+     await sequelize.query(`CREATE TABLE IF NOT EXISTS course_chapter_${instituteNumber}(
+        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()), 
+        chapterName VARCHAR(255) NOT NULL, 
+        chapterDuration VARCHAR(100) NOT NULL, 
+        chapterLevel ENUM('beginner','intermediate','advance') NOT NULL, 
+        courseId VARCHAR(36) REFERENCES course_${instituteNumber}(id) ON DELETE CASCADE ON UPDATE CASCADE, 
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+        )`)
+    next()
+  }
+
+   static async createChapterLessonTable(
+    req: IExtendedRequest,
+    res: Response,
+    next: NextFunction
+  ){
+      const instituteNumber = req.user?.currentInstituteNumber 
+    await sequelize.query(`CREATE TABLE IF NOT EXISTS chapter_lesson_${instituteNumber}(
+        id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()), 
+        lessonName VARCHAR(255) NOT NULL, 
+        lessonDescription TEXT, 
+        lessonVideoUrl VARCHAR(200) NOT NULL, 
+        lessonThumbnailUrl VARCHAR(200) NOT NULL, 
+        chapterId VARCHAR(36) REFERENCES course_chapter_${instituteNumber}(id) ON DELETE CASCADE ON UPDATE CASCADE, 
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+        )`,{
+            type : QueryTypes.INSERT
+        })
+        next()
   }
 }
 

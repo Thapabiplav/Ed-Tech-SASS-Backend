@@ -4,6 +4,6 @@ import { teacherLogin } from "../../controller/teacher/teacherController";
 
 const router: Router = express.Router();
 
-router.route("/teacher/login").post(asyncErrorHandler(teacherLogin));
+router.route("/login").post(asyncErrorHandler(teacherLogin));
 
 export default router;
